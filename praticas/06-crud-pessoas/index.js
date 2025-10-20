@@ -34,7 +34,7 @@ const PessoaModel = mongoose.model('Pessoas', new mongoose.Schema(
 ))
 
 // CRUD
-// Create
+// Criação
 app.post('/pessoas', async (req, res, next) => {
     const pessoa = req.body
     if(!pessoa.nome || !pessoa.idade){
@@ -43,16 +43,32 @@ app.post('/pessoas', async (req, res, next) => {
     const pessoaCriada = await PessoaModel.create(pessoa)
     res.status(201).json(pessoaCriada)
 })
-// READ
+// Leitura
 app.get('/pessoas', async (req, res, next) => {
     const pessoas = await PessoaModel.find()
     res.json(pessoas)
 })
 
+// Atualização
+app.put('/pessoas/:id', async (req, res, next) => {
+    const id = req.params.id
+    const pessoa = req.body
+    if(!pessoa.nome || !pessoa.idade){
+        return res.status(400).json({erro: "Campos nome e idade são obrigatórios!"})
+    }
+    const pessoaAtualizada = await PessoaModel.findByIdAndUpdate(id, pessoa, {new: true})
+    if(!pessoaAtualizada){
+        return res.status(404).json({ erro: "Pessoa não encontrada!"})
+    }
+    res.json(pessoaAtualizada)
+})
 
-
-
-
+// Exlusão
+app.delete('/pessoas/:id', async (req, res, next) => {
+    const id = req.params.id
+    await PessoaModel.findByIdAndDelete(id)
+    res.status(204).send()
+})
 
 app.listen(3000, () => {
     console.log("Aplicação rodando em http://localhost:3000")
