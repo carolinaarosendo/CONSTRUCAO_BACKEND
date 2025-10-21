@@ -45,6 +45,7 @@ app.post('/pessoas', async (req, res, next) => {
 })
 // Leitura
 app.get('/pessoas', async (req, res, next) => {
+    const id = req.params.id
     const pessoas = await PessoaModel.find()
     res.json(pessoas)
 })
@@ -63,7 +64,7 @@ app.put('/pessoas/:id', async (req, res, next) => {
     res.json(pessoaAtualizada)
 })
 
-// Exlusão
+// Exclusão
 app.delete('/pessoas/:id', async (req, res, next) => {
     const id = req.params.id
     await PessoaModel.findByIdAndDelete(id)
