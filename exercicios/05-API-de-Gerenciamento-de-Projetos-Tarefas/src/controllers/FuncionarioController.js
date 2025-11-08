@@ -3,13 +3,15 @@ const router = express.Router()
 
 const FuncionarioModel = require('../models/FuncionarioModel')
 const {validarFuncionario} = require('../validators/FuncionarioValidator')
+const {validarID} = require('../validators/IDValidator')
+
 // buscar
 router.get('/funcionarios', async (req,res,next) => {
     const funcionarios = await FuncionarioModel.find()
     res.json(funcionarios)
 })
 // buscar por id
-router.get('/funcionarios/:id', async (req,res,next) => {
+router.get('/funcionarios/:id', validarID, async (req,res,next) => {
     const funcionarioEncontrado = await FuncionarioModel.findById(req.params.id)
     if(!funcionarioEncontrado) {
         return res(404).json({erro: "Não encontrado"})
@@ -22,7 +24,7 @@ router.post('/funcionarios',validarFuncionario, async (req,res,next) => {
     res.status(201).json(funcionarioCadastrado)
 })
 // atualizar
-router.put('/funcionarios/:id', async (req,res,next) => {
+router.put('/funcionarios/:id', validarID, async (req,res,next) => {
     const id = req.params.id
     const dados = req.body
     const funcionarioAtualizado = await FuncionarioModel.findByIdAndUpdate(id, dados, {new: true})
@@ -32,7 +34,7 @@ router.put('/funcionarios/:id', async (req,res,next) => {
     res.json(funcionarioAtualizado)
 })
 // delete
-router.delete('/funcionarios/:id', async (req,res,next) => {
+router.delete('/funcionarios/:id', validarID, async (req,res,next) => {
     await FuncionarioModel.findByIdAndDelete(req.params.id)
     res.status(204).send()
 })

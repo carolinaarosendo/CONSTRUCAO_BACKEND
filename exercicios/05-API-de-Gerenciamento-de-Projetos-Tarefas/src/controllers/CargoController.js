@@ -3,6 +3,7 @@ const router = express.Router()
 
 const CargoModel = require('../models/CargoModel')
 const { validarCargo } = require('../validators/CargoValidator')
+const {validarID} = require('../validators/IDValidator')
 
 // rotas
 router.get('/cargos', async (req, res, next) => {
@@ -10,7 +11,7 @@ router.get('/cargos', async (req, res, next) => {
   res.json(cargos)
 })
 
-router.get('/cargos/:id', async (req, res, next) => {
+router.get('/cargos/:id', validarID, async (req, res, next) => {
   const cargoEcontrado = await CargoModel.findById(req.params.id)
   if (!cargoEcontrado) {
     return res.status(404).json({ erro: "Não encontrado" })
@@ -22,7 +23,7 @@ router.post('/cargos', validarCargo, async (req, res, next) => {
   res.status(201).json(cargoCriado)
 })
 
-router.put('/cargos/:id', validarCargo, async (req, res, next) => {
+router.put('/cargos/:id', validarID, validarCargo, async (req, res, next) => {
   const id = req.params.id
   const cargoAtualizado = await CargoModel.findByIdAndUpdate(id, req.body,
     { new: true })
@@ -32,7 +33,7 @@ router.put('/cargos/:id', validarCargo, async (req, res, next) => {
   res.json(cargoAtualizado)
 })
 
-router.delete('/cargos/:id', async (req, res, next) => {
+router.delete('/cargos/:id', validarID, async (req, res, next) => {
   await CargoModel.findByIdAndDelete(req.params.id)
   res.status(204).send()
 })
